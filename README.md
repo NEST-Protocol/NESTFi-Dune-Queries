@@ -1,9 +1,16 @@
-# Dune NESTFi Platform Stats
+# NESTFi Analytics on Dune.com
+
+- Team: [nestfi](https://dune.com/nestfi)
+- Project: nestfi (only one project for now)
+- Engine: [Dune Engine v2](https://dune.com/docs/reference/dune-v2) (Dune SQL)
 
 ## Queries
-1. Weekly Trading Volume (Margin trading, Swaps)($NEST)
-2. Weekly NEST burned($NEST)
-3. Weekly Unique Users (Margin trading, Swaps)
-4. Total TVL (Ethereum+BSC) ($USD)
-5. Long Open Interest ($NEST)
-6. Short Open Interest($NEST)
+production: [click here](https://dune.com/browse/queries?team=nestfi)
+
+## Dashboards
+production: [click here](https://dune.com/browse/dashboards?team=nestfi)
+
+## Some Help
+- [Dune Welcome](https://dune.com/docs/)
+- [Dune v2 Database](https://dune.com/docs/reference/dune-v2/database/)
+- [Dune v2 Query Engines](https://dune.com/docs/reference/dune-v2/query-engine/)

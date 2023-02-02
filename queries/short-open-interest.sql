@@ -3,10 +3,14 @@
 -- Network: bnb
 WITH all_buy2_long AS (SELECT lever,
                               cast(amount as bigint) as amount,
-                              orientation,
-                              tokenIndex,
                               call_tx_hash           as hash
                        FROM nestfi_bnb.NestFutures2_call_buy2
+                       WHERE orientation = FALSE
+                       UNION
+                       SELECT lever,
+                              cast(amount as bigint) as amount,
+                              call_tx_hash           as hash
+                       FROM nestfi_bnb.NestFutures2_call_proxyBuy2
                        WHERE orientation = FALSE),
      all_buy2_log AS (SELECT index,
                              evt_tx_hash as hash
@@ -30,13 +34,12 @@ WITH all_buy2_long AS (SELECT lever,
                                           ON add_data.index = all_buy2_long_data.index),
      add_full_data_sum AS (SELECT SUM(total) as total
                            FROM add_full_data),
-     buy_full_data_sum AS (
-         SELECT SUM(all_buy2_long_data.lever * all_buy2_long_data.amount) as total
-         FROM all_buy2_long_data
-         WHERE all_buy2_long_data.index NOT IN (SELECT index
-                                                FROM all_settle)
-           AND all_buy2_long_data.index NOT IN (SELECT index
-                                                FROM all_sell)
-     )
+     buy_full_data_sum AS (SELECT SUM(all_buy2_long_data.lever * all_buy2_long_data.amount) as total
+                           FROM all_buy2_long_data
+                           WHERE all_buy2_long_data.index NOT IN (SELECT index
+                                                                  FROM all_settle)
+                             AND all_buy2_long_data.index NOT IN (SELECT index
+                                                                  FROM all_sell))
 SELECT buy_full_data_sum.total + add_full_data_sum.total as total
-FROM buy_full_data_sum, add_full_data_sum
+FROM buy_full_data_sum,
+     add_full_data_sum

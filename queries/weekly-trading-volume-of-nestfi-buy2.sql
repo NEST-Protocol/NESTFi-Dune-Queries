@@ -2,7 +2,7 @@
 -- Project: nestfi
 -- Network: bnb
 SELECT DATE_TRUNC('week', call_block_time) AS block_date,
-       SUM(amount)            AS total_amount
+       SUM(amount)            AS volume
 FROM (SELECT
           call_block_time,
           cast(amount as integer) * lever as amount

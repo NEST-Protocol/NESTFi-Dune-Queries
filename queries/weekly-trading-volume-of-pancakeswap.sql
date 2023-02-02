@@ -2,7 +2,7 @@
 -- Project: nestfi
 -- Network: bnb
 SELECT DATE_TRUNC('week', evt_block_time) AS block_date,
-       SUM(amount)                        AS active_users_count
+       SUM(amount)                        AS volume
 FROM (SELECT evt_block_time,
              cast(value as uint256) / (cast(1e18 as uint256)) as amount
       FROM nestfi_bnb.NEST_evt_Transfer

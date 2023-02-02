@@ -34,8 +34,8 @@ WITH nestfi_data AS (
     ORDER BY 1
 )
 SELECT nestfi_data.block_date,
-       nestfi_data.active_users_count nest_fi,
+       nestfi_data.active_users_count nestfi,
        pancake_data.active_users_count pancake
 FROM nestfi_data
-         FULL JOIN pancake_data
-                   ON nestfi_data.block_date = pancake_data.block_date;
+LEFT JOIN pancake_data
+ON nestfi_data.block_date = pancake_data.block_date;

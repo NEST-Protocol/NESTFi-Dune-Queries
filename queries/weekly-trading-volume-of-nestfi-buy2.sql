@@ -8,7 +8,7 @@ FROM (SELECT
           cast(amount as integer) * lever as amount
       FROM
           nestfi_bnb.NestFutures2_call_buy2
-      WHERE call_success = False
+      WHERE call_success = TRUE
      ) as nestfi_data
 GROUP BY 1
 ORDER BY 1

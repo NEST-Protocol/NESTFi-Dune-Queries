@@ -6,19 +6,22 @@ WITH all_buy2_long AS (SELECT lever,
                               call_tx_hash           as hash
                        FROM nestfi_bnb.NestFutures2_call_buy2
                        WHERE orientation = TRUE
+                       AND call_success = TRUE
                        UNION
                        SELECT lever,
                               cast(amount as bigint) as amount,
                               call_tx_hash           as hash
                        FROM nestfi_bnb.NestFutures2_call_proxyBuy2
-                       WHERE orientation = TRUE),
+                       WHERE orientation = TRUE
+                         AND call_success = TRUE),
      all_buy2_log AS (SELECT index,
                              evt_tx_hash as hash
                       FROM nestfi_bnb.NestFutures2_evt_Buy2),
      all_settle AS (SELECT index
                     FROM nestfi_bnb.NestFutures2_evt_Settle),
      all_sell AS (SELECT index
-                  FROM nestfi_bnb.NestFutures2_call_sell2),
+                  FROM nestfi_bnb.NestFutures2_call_sell2
+                  WHERE call_success = TRUE),
      all_buy2_long_data AS (SELECT all_buy2_long.lever,
                                    all_buy2_long.amount,
                                    all_buy2_log.index
@@ -27,7 +30,8 @@ WITH all_buy2_long AS (SELECT lever,
                                                ON all_buy2_long.hash = all_buy2_log.hash),
      add_data AS (SELECT cast(amount as bigint) as amount,
                          index
-                  FROM nestfi_bnb.NestFutures2_call_add2),
+                  FROM nestfi_bnb.NestFutures2_call_add2
+                  WHERE call_success = TRUE),
      add_full_data AS (SELECT add_data.amount * all_buy2_long_data.lever as total
                        FROM add_data
                                 LEFT JOIN all_buy2_long_data

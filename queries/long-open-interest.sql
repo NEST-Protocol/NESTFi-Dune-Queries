@@ -6,7 +6,7 @@ WITH all_buy2_long AS (SELECT lever,
                               call_tx_hash           as hash
                        FROM nestfi_bnb.NestFutures2_call_buy2
                        WHERE orientation = TRUE
-                       AND call_success = TRUE
+                         AND call_success = TRUE
                        UNION
                        SELECT lever,
                               cast(amount as bigint) as amount,
@@ -26,19 +26,24 @@ WITH all_buy2_long AS (SELECT lever,
                                    all_buy2_long.amount,
                                    all_buy2_log.index
                             FROM all_buy2_long
-                                     LEFT JOIN all_buy2_log
-                                               ON all_buy2_long.hash = all_buy2_log.hash),
+                                     LEFT JOIN all_buy2_log ON all_buy2_long.hash = all_buy2_log.hash),
      add_data AS (SELECT cast(amount as bigint) as amount,
                          index
                   FROM nestfi_bnb.NestFutures2_call_add2
                   WHERE call_success = TRUE),
-     add_full_data AS (SELECT add_data.amount * all_buy2_long_data.lever as total
+     add_full_data AS (SELECT add_data.amount * all_buy2_long_data.lever as total,
+                              add_data.index
                        FROM add_data
-                                LEFT JOIN all_buy2_long_data
-                                          ON add_data.index = all_buy2_long_data.index),
+                                LEFT JOIN all_buy2_long_data ON add_data.index = all_buy2_long_data.index),
      add_full_data_sum AS (SELECT SUM(total) as total
-                           FROM add_full_data),
-     buy_full_data_sum AS (SELECT SUM(all_buy2_long_data.lever * all_buy2_long_data.amount) as total
+                           FROM add_full_data
+                           WHERE index NOT IN (SELECT index
+                                               FROM all_settle)
+                             AND index NOT IN (SELECT index
+                                               FROM all_sell)),
+     buy_full_data_sum AS (SELECT SUM(
+                                          all_buy2_long_data.lever * all_buy2_long_data.amount
+                                      ) as total
                            FROM all_buy2_long_data
                            WHERE all_buy2_long_data.index NOT IN (SELECT index
                                                                   FROM all_settle)
@@ -47,3 +52,5 @@ WITH all_buy2_long AS (SELECT lever,
 SELECT buy_full_data_sum.total + add_full_data_sum.total as total
 FROM buy_full_data_sum,
      add_full_data_sum
+
+-- 29_046_964_500

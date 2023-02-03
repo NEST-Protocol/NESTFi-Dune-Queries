@@ -52,6 +52,3 @@ WITH all_buy2_long AS (SELECT lever,
 SELECT buy_full_data_sum.total + add_full_data_sum.total as total
 FROM buy_full_data_sum,
      add_full_data_sum
-
--- 23_484_829_000
--- 662_792_422_300

@@ -17,11 +17,6 @@ WITH all_buy2_long AS (SELECT lever,
      all_buy2_log AS (SELECT index,
                              evt_tx_hash as hash
                       FROM nestfi_bnb.NestFutures2_evt_Buy2),
-     all_settle AS (SELECT index
-                    FROM nestfi_bnb.NestFutures2_evt_Settle),
-     all_sell AS (SELECT index
-                  FROM nestfi_bnb.NestFutures2_call_sell2
-                  WHERE call_success = TRUE),
      all_buy2_long_data AS (SELECT all_buy2_long.lever,
                                    all_buy2_long.amount,
                                    all_buy2_log.index
@@ -38,19 +33,18 @@ WITH all_buy2_long AS (SELECT lever,
      add_full_data_sum AS (SELECT SUM(total) as total
                            FROM add_full_data
                            WHERE index NOT IN (SELECT index
-                                               FROM all_settle)
+                                               FROM nestfi_bnb.NestFutures2_evt_Settle)
                              AND index NOT IN (SELECT index
-                                               FROM all_sell)),
+                                               FROM nestfi_bnb.NestFutures2_call_sell2)),
      buy_full_data_sum AS (SELECT SUM(
                                           all_buy2_long_data.lever * all_buy2_long_data.amount
                                       ) as total
                            FROM all_buy2_long_data
                            WHERE all_buy2_long_data.index NOT IN (SELECT index
-                                                                  FROM all_settle)
+                                                                  FROM nestfi_bnb.NestFutures2_evt_Settle)
                              AND all_buy2_long_data.index NOT IN (SELECT index
-                                                                  FROM all_sell))
+                                                                  FROM nestfi_bnb.NestFutures2_call_sell2
+                                                                  WHERE call_success = TRUE))
 SELECT buy_full_data_sum.total + add_full_data_sum.total as total
 FROM buy_full_data_sum,
      add_full_data_sum
-
--- 29_046_964_500

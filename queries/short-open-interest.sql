@@ -49,6 +49,6 @@ WITH all_buy2_long AS (SELECT lever,
                                                                   FROM all_settle)
                              AND all_buy2_long_data.index NOT IN (SELECT index
                                                                   FROM all_sell))
-SELECT buy_full_data_sum.total + add_full_data_sum.total as total
+SELECT (buy_full_data_sum.total + add_full_data_sum.total)/10000 as total
 FROM buy_full_data_sum,
      add_full_data_sum
